@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xo_game/ui/screens/game_screen.dart';
 import 'package:xo_game/ui/screens/welcome_screen.dart';
 
 void main() {
@@ -13,9 +14,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'XO Game',
-      initialRoute: WelcomeScreen.routeName,
+      initialRoute: GameScreen.routeName,
       routes: {
         WelcomeScreen.routeName : (context) => WelcomeScreen(),
+        GameScreen.routeName : (context) => WelcomeScreen(),
       },
     );
   }
