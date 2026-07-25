@@ -12,7 +12,7 @@ class SymbolContainer extends StatelessWidget {
       padding: .all(padding),
       decoration: BoxDecoration(
         borderRadius: .circular(32),
-        color: AppColors.white
+        color: AppColors.white,
       ),
       child: Image.asset(image),
     );

@@ -108,9 +108,15 @@ class _GameScreenState extends State<GameScreen> {
     return Row(
       mainAxisAlignment: .spaceAround,
       children: [
-        statesContainer(player: player1, isCurrentPlayer: currentPlayer == player1),
+        statesContainer(
+          player: player1,
+          isCurrentPlayer: currentPlayer == player1,
+        ),
         statesContainer(),
-        statesContainer(player: player2, isCurrentPlayer: currentPlayer == player2)
+        statesContainer(
+          player: player2,
+          isCurrentPlayer: currentPlayer == player2,
+        ),
       ],
     );
   }
@@ -128,13 +134,13 @@ class _GameScreenState extends State<GameScreen> {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: .circular(10)
+        borderRadius: .circular(10),
       ),
       padding: .symmetric(horizontal: 30, vertical: 10),
       child: Column(
         children: [
-          Text(title,style: TextStyle(fontSize: 20)),
-          Text(subtitle,style: TextStyle(fontSize: 16)),
+          Text(title, style: TextStyle(fontSize: 20)),
+          Text(subtitle, style: TextStyle(fontSize: 16)),
         ],
       ),
     );

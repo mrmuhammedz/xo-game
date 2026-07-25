@@ -16,9 +16,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'XO Game',
       routes: {
-        WelcomeScreen.routeName : (context) => const WelcomeScreen(),
-        GameScreen.routeName : (context) => const GameScreen(),
-        WinScreen.routeName : (context) => const WinScreen(),
+        WelcomeScreen.routeName: (context) => const WelcomeScreen(),
+        GameScreen.routeName: (context) => const GameScreen(),
+        WinScreen.routeName: (context) => const WinScreen(),
       },
       initialRoute: WelcomeScreen.routeName,
     );
