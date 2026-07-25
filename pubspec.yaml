@@ -1,5 +1,5 @@
 name: xo_game
-description: "A new Flutter project."
+description: "A responsive Tic Tac Toe game built with Flutter using clean architecture and reusable widgets."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
