@@ -22,7 +22,9 @@ class WelcomeScreen extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: .end,
                 mainAxisAlignment: .center,
-                children: [ const Text("Tic-Tac-Toe", style: AppStyle.white40black)],
+                children: [
+                  const Text("Tic-Tac-Toe", style: AppStyle.white40black),
+                ],
               ),
             ),
             Expanded(
@@ -57,6 +59,6 @@ class WelcomeScreen extends StatelessWidget {
         arguments: (imagePath),
       );
     },
-    child: SymbolContainer(image: imagePath,),
+    child: SymbolContainer(image: imagePath),
   );
 }

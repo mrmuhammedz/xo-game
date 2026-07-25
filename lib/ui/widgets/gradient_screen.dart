@@ -18,15 +18,9 @@ class GradientScreen extends StatelessWidget {
         ),
         image: image == null
             ? null
-            : DecorationImage(
-                image: AssetImage(image!),
-                fit: BoxFit.fill,
-              ),
+            : DecorationImage(image: AssetImage(image!), fit: BoxFit.fill),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: child,
-      ),
+      child: Scaffold(backgroundColor: Colors.transparent, body: child),
     );
   }
 }

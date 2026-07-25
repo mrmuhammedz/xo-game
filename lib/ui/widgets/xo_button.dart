@@ -5,7 +5,12 @@ class XoButton extends StatelessWidget {
   final void Function(int index) onClick;
   final int index;
 
-  const XoButton({super.key, required this.symbol, required this.onClick, required this.index});
+  const XoButton({
+    super.key,
+    required this.symbol,
+    required this.onClick,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +20,9 @@ class XoButton extends StatelessWidget {
           onClick(index);
         },
         child: symbol.isEmpty
-              ? SizedBox(height: double.infinity,)
-              : Image.asset(symbol),
-        ),
+            ? SizedBox(height: double.infinity)
+            : Image.asset(symbol),
+      ),
     );
   }
 }
