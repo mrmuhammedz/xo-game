@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:xo_game/ui/screens/widgets/xo_button.dart';
-import 'package:xo_game/ui/screens/widgets/gradient_screen.dart';
+import 'package:xo_game/models/player_dm.dart';
+import 'package:xo_game/ui/widgets/xo_button.dart';
+import 'package:xo_game/ui/widgets/gradient_screen.dart';
 import 'package:xo_game/ui/screens/win_screen.dart';
-import 'package:xo_game/ui/utils/app_assets.dart';
-import 'package:xo_game/ui/utils/app_colors.dart';
-import 'package:xo_game/ui/utils/app_style.dart';
+import 'package:xo_game/utils/app_assets.dart';
+import 'package:xo_game/utils/app_colors.dart';
+import 'package:xo_game/utils/app_style.dart';
 
 class GameScreen extends StatefulWidget {
   static const String routeName = "/game";
@@ -21,14 +22,17 @@ class _GameScreenState extends State<GameScreen> {
   int turnIndex = 0;
   List<String> boardCells = ["", "", "", "", "", "", "", "", ""];
   late Timer timer;
-  late String playerOneSymbol;
-  late String playerTwoSymbol;
+  bool playerOneStarts = true;
+  late PlayerDm player1;
+  late PlayerDm player2;
+  int draw = 0;
+
   bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(seconds: 1), (timer) => setState(() {}));
+    startTimer();
   }
 
   @override
@@ -40,11 +44,19 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
-      playerOneSymbol = ModalRoute.of(context)!.settings.arguments as String;
-
-      playerTwoSymbol = playerOneSymbol == AppAssets.icX
-          ? AppAssets.icO
-          : AppAssets.icX;
+      player1 = PlayerDm(
+        id: 1,
+        symbol: ModalRoute.of(context)!.settings.arguments as String,
+      );
+      player2 = PlayerDm(
+        id: 2,
+        symbol: player1.symbol == AppAssets.icX ? AppAssets.icO : AppAssets.icX,
+      );
+      // playerOneSymbol = ModalRoute.of(context)!.settings.arguments as String;
+      //
+      // playerTwoSymbol = playerOneSymbol == AppAssets.icX
+      //     ? AppAssets.icO
+      //     : AppAssets.icX;
 
       _isInitialized = true;
     }
@@ -56,14 +68,16 @@ class _GameScreenState extends State<GameScreen> {
             child: Column(
               crossAxisAlignment: .center,
               children: [
-                const SizedBox(height: 25),
+                const SizedBox(height: 15),
                 buildTimer(),
-                const SizedBox(height: 32),
+                const SizedBox(height: 25),
+                buildStates(),
+                const SizedBox(height: 20),
                 Text(
-                  "Player ${turnIndex.isEven ? "1" : "2"}’s Turn",
+                  "${currentPlayer.playerName}’s Turn",
                   style: AppStyle.white36bold,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 10),
                 buildGameGrid(),
                 const SizedBox(height: 15),
               ],
@@ -86,6 +100,42 @@ class _GameScreenState extends State<GameScreen> {
         formatIntToTime(timer.tick),
         textAlign: .center,
         style: AppStyle.black32semiBold,
+      ),
+    );
+  }
+
+  Widget buildStates() {
+    return Row(
+      mainAxisAlignment: .spaceAround,
+      children: [
+        statesContainer(player: player1, isCurrentPlayer: currentPlayer == player1),
+        statesContainer(),
+        statesContainer(player: player2, isCurrentPlayer: currentPlayer == player2)
+      ],
+    );
+  }
+
+  Container statesContainer({PlayerDm? player, bool isCurrentPlayer = false}) {
+    final isDraw = player == null;
+    final backgroundColor = isDraw
+        ? AppColors.white
+        : isCurrentPlayer
+        ? player.color
+        : AppColors.white;
+
+    final title = isDraw ? "Draw" : "Player: ${player.id}";
+    final subtitle = isDraw ? "$draw" : "Wins: ${player.wins}";
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: .circular(10)
+      ),
+      padding: .symmetric(horizontal: 30, vertical: 10),
+      child: Column(
+        children: [
+          Text(title,style: TextStyle(fontSize: 20)),
+          Text(subtitle,style: TextStyle(fontSize: 16)),
+        ],
       ),
     );
   }
@@ -193,29 +243,34 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  void onPlayerClick(int index) {
-    setState(() {
-      if(checkWinner()) return;
-      if (boardCells[index].isNotEmpty) return;
-      boardCells[index] = turnIndex.isEven ? playerOneSymbol : playerTwoSymbol;
-      if (checkWinner()) {
-        timer.cancel();
-        Navigator.pushNamed(
-          context,
-          WinScreen.routeName,
-          arguments: {
-            "player": turnIndex.isEven ? "1" : "2",
-            "symbol": turnIndex.isEven ? playerOneSymbol : playerTwoSymbol,
-          },
-        );
-        return;
-      }
-      if (turnIndex == 8) {
-        clearBoard();
-        return;
-      }
-      turnIndex++;
-    });
+  PlayerDm get currentPlayer =>
+      (turnIndex.isEven == playerOneStarts) ? player1 : player2;
+
+  void onPlayerClick(int index) async {
+    if (boardCells[index].isNotEmpty) return;
+    setState(() => boardCells[index] = currentPlayer.symbol);
+    if (checkWinner()) {
+      timer.cancel();
+      setState(() => currentPlayer.wins++);
+      await Navigator.pushNamed(
+        context,
+        WinScreen.routeName,
+        arguments: currentPlayer,
+      );
+      startNewRound();
+      return;
+    }
+    if (turnIndex == 8) {
+      setState(() => draw++);
+
+      startNewRound();
+      return;
+    }
+    setState(() => turnIndex++);
+  }
+
+  void startTimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
   }
 
   String formatIntToTime(int time) {
@@ -246,9 +301,10 @@ class _GameScreenState extends State<GameScreen> {
     return false;
   }
 
-  void clearBoard() {
+  void startNewRound() {
     boardCells = List.filled(9, "");
     turnIndex = 0;
-    timer.cancel();
+    playerOneStarts = !playerOneStarts;
+    startTimer();
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:xo_game/ui/screens/game_screen.dart';
-import 'package:xo_game/ui/screens/widgets/symbol_container.dart';
-import 'package:xo_game/ui/screens/widgets/gradient_screen.dart';
-import 'package:xo_game/ui/utils/app_assets.dart';
-import 'package:xo_game/ui/utils/app_style.dart';
+import 'package:xo_game/ui/widgets/symbol_container.dart';
+import 'package:xo_game/ui/widgets/gradient_screen.dart';
+import 'package:xo_game/utils/app_assets.dart';
+import 'package:xo_game/utils/app_style.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static const String routeName = "/welcome";

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:xo_game/models/player_dm.dart';
 import 'package:xo_game/ui/screens/welcome_screen.dart';
-import 'package:xo_game/ui/screens/widgets/symbol_container.dart';
-import 'package:xo_game/ui/screens/widgets/gradient_screen.dart';
-import 'package:xo_game/ui/utils/app_colors.dart';
-import 'package:xo_game/ui/utils/app_style.dart';
+import 'package:xo_game/ui/widgets/symbol_container.dart';
+import 'package:xo_game/ui/widgets/gradient_screen.dart';
+import 'package:xo_game/utils/app_colors.dart';
+import 'package:xo_game/utils/app_style.dart';
 
 class WinScreen extends StatelessWidget {
   static const String routeName = "/win";
@@ -12,57 +13,56 @@ class WinScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScreen(
-      child: buildBody(context),
-    );
-  }
-
-  Widget buildBody(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-    return Center(
-      child: Column(
-        mainAxisAlignment: .center,
-        children: [
-          const Spacer(),
-
-          Text(
-            "The winner is Player ${args["player"]}",
-            style: AppStyle.white36bold,
-          ),
-
-          const SizedBox(height: 40),
-
-          SymbolContainer(image: args["symbol"]!,padding: 39,),
-
-          const Spacer(),
-
-          const Text(
-            "Want to play again?",
-            style: AppStyle.grey22
-          ),
-
-          const SizedBox(height: 20),
-
-          FilledButton(
-            onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(context, WelcomeScreen.routeName, (route) => false);
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.white,
-              foregroundColor: AppColors.blue,
-              padding: const .symmetric(
-                horizontal: 40,
-                vertical: 16,
+    PlayerDm player = ModalRoute.of(context)?.settings.arguments as PlayerDm;
+    return PopScope(
+      canPop: false,
+      child: GradientScreen(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: .center,
+            children: [
+              const Spacer(),
+              Text(
+                "The winner is ${player.playerName}",
+                style: AppStyle.white36bold,
               ),
-            ),
-            child: const Text(
-              "Play Again",
-              style: TextStyle(fontSize: 18),
-            ),
+              Text("Wins: ${player.wins}", style: AppStyle.white32semiBold),
+              const SizedBox(height: 30),
+              SymbolContainer(image: player.symbol, padding: 30),
+              const Spacer(),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: .spaceEvenly,
+                children: [
+                  button("Continue", () {
+                    Navigator.pop(context);
+                  }),
+                  button("Play Again", () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      WelcomeScreen.routeName,
+                      (route) => false,
+                    );
+                  }),
+                ],
+              ),
+              const SizedBox(height: 40),
+            ],
           ),
-          const SizedBox(height: 40),
-        ],
+        ),
       ),
     );
   }
+
+  FilledButton button(String text, Function onPress) => FilledButton(
+    onPressed: () {
+      onPress();
+    },
+    style: FilledButton.styleFrom(
+      backgroundColor: AppColors.white,
+      foregroundColor: AppColors.blue,
+      padding: const .symmetric(horizontal: 40, vertical: 16),
+    ),
+    child: Text(text, style: TextStyle(fontSize: 18)),
+  );
 }
