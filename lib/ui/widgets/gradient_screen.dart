@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xo_game/ui/utils/app_colors.dart';
+import 'package:xo_game/utils/app_colors.dart';
 
 class GradientScreen extends StatelessWidget {
   final Widget child;
